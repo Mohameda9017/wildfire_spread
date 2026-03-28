@@ -1,0 +1,2 @@
+segmentation-models
+tensorflow[and-cuda]==2.21.0

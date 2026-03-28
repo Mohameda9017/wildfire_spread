@@ -1,7 +1,21 @@
+```python
 from __future__ import annotations
 
+import os
+import sys
 from pathlib import Path
 import json
+
+# Setup GPU libraries for pip-installed CUDA/cuDNN before ANY other imports
+try:
+    project_root = str(Path(__file__).resolve().parents[1])
+    if project_root not in sys.path:
+        sys.path.append(project_root)
+    import src.utils.gpu
+    src.utils.gpu.setup_gpu_libraries()
+except ImportError:
+    pass
+
 import tensorflow as tf
 
 from src.preprocess import build_dataset

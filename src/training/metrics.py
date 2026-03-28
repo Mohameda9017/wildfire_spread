@@ -88,3 +88,20 @@ def masked_iou(y_true: tf.Tensor, y_pred: tf.Tensor) -> tf.Tensor:
     union = tf.reduce_sum(y_true_clean) + tf.reduce_sum(y_pred_bin) - intersection
 
     return intersection / (union + 1e-8)
+class MaskedAUC(tf.keras.metrics.AUC):
+    """
+    AUC (AP / AUC-PR) metric that ignores pixels with y_true == -1.
+    """
+    def update_state(self, y_true, y_pred, sample_weight=None):
+        mask = tf.cast(tf.not_equal(y_true, -1.0), tf.float32)
+        # Replace -1 with 0 for internal AUC calculation safety
+        y_true_clean = tf.where(tf.equal(y_true, -1.0), 0.0, y_true)
+        
+        if sample_weight is not None:
+            mask = mask * tf.cast(sample_weight, tf.float32)
+            
+        return super().update_state(y_true_clean, y_pred, sample_weight=mask)
+
+
+# Exported instances for use in model.compile
+masked_ap = MaskedAUC(curve='PR', name='masked_ap')

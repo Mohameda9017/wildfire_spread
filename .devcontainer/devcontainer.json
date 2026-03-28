@@ -1,0 +1,26 @@
+{
+	"name": "Wildfire Spread GPU",
+	"build": {
+		"dockerfile": "Dockerfile",
+		"context": ".."
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-python.python",
+				"ms-python.vscode-pylance",
+				"ms-toolsai.jupyter"
+			]
+		}
+	},
+	"remoteUser": "vscode",
+	"updateRemoteUserUID": true,
+	"runArgs": [
+		"--gpus", "all",
+		"--shm-size", "8gb"
+	],
+	"mounts": [
+		"source=${localWorkspaceFolder},target=/workspace,type=bind"
+	],
+	"workspaceFolder": "/workspace"
+}
